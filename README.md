@@ -1,1 +1,1 @@
-# E-CommercePlatform
+An ASP.NET Core-based e-commerce platform designed to provide a seamless and efficient online shopping experience. This project serves as the foundation for building a fully functional e-commerce website, featuring a robust entry point that sets up the host builder, configures services, and ensures smooth operation of the application. Perfect for developers looking to dive into the world of e-commerce, this platform offers a head start in crafting user-friendly, responsive, and scalable online stores.
