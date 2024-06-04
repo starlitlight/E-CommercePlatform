@@ -17,7 +17,8 @@ public class Startup
     public void ConfigureServices(IServiceCollection services)
     {
         services.AddControllersWithViews();
-        services.AddDbContext<YourDbContext>(options =>
+
+        services.AddDbContextPool<YourDbContext>(options =>
             options.UseSqlServer(Configuration.GetConnectionString("YourConnectionStringName")));
     }
 
@@ -35,6 +36,7 @@ public class Startup
         
         app.UseHttpsRedirection();
         app.UseStaticFiles();
+
         app.UseRouting();
         
         app.UseEndpoints(endpoints =>
