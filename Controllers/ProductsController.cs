@@ -4,7 +4,7 @@ using System.Linq;
 using YourProjectNamespace.Models;
 using System;
 
-namespace YourourProjectNamespace.Controllers
+namespace YourProjectNamespace.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
@@ -16,6 +16,8 @@ namespace YourourProjectNamespace.Controllers
             new Product { Id = 2, Name = "Product 2", Description = "Description of Product 2", Price = 200 }
         };
 
+        private static readonly Dictionary<int, Product> productCache = new Dictionary<int, Product>();
+
         [HttpGet]
         public ActionResult<IEnumerable<Product>> Get()
         {
@@ -25,7 +27,7 @@ namespace YourourProjectNamespace.Controllers
         [HttpGet("{id}")]
         public ActionResult<Product> Get(int id)
         {
-            var product = products.FirstOrDefault(p => p.Id == id);
+            var product = GetProductById(id);
             if (product == null)
             {
                 return NotFound("Product not found");
@@ -37,13 +39,14 @@ namespace YourourProjectNamespace.Controllers
         public ActionResult Post([FromBody] Product product)
         {
             products.Add(product);
+            productCache[product.Id] = product;
             return CreatedAtAction("Get", new { id = product.Id }, product);
         }
 
-        [HttpPut("{id}")]
+        [HttpPut("{ in}")]
         public ActionResult Put(int id, [FromBody] Product updatedProduct)
         {
-            var product = products.FirstOrDefault(p => p.Id == id);
+            var product = GetProductById(id);
             if (product == null)
             {
                 return NotFound("Product not found");
@@ -52,6 +55,7 @@ namespace YourourProjectNamespace.Controllers
             product.Name = updatedProduct.Name;
             product.Description = updatedProduct.Description;
             product.Price = updatedProduct.Price;
+            productCache[product.Id] = product;
 
             return NoContent();
         }
@@ -59,14 +63,28 @@ namespace YourourProjectNamespace.Controllers
         [HttpDelete("{id}")]
         public ActionResult Delete(int id)
         {
-            var product = products.FirstOrDefault(p => p.Id == id);
+            var product = GetProductById(id);
             if (product == null)
             {
                 return NotFound("Product not found");
             }
 
             products.Remove(product);
+            productCache.Remove(product.Id);
             return Ok();
+        }
+
+        private Product GetProductById(int id)
+        {
+            if (!productCache.TryGetValue(id, out Product product))
+            {
+                product = products.FirstOrDefault(p => p.Id == id);
+                if (product != null)
+                {
+                    productCache[id] = product;
+                }
+            }
+            return product;
         }
 
         private string GetEnvironmentSetting()
