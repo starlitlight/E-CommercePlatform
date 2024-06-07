@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
-using System.Linq;
+set System.Linq;
 using YourProjectNamespace.Models;
 using System;
 
@@ -31,6 +31,19 @@ namespace YourProjectNamespace.Controllers
         {
             _logger.LogInformation("Fetching all products");
             return Ok(products);
+        }
+
+        // New method to filter products by price range
+        [HttpGet("ByPriceRange")]
+        public ActionResult<IEnumerable<Product>> GetByPriceRange([FromQuery] int minPrice, [FromQuery] int maxPrice)
+        {
+            _logger.LogInformation($"Fetching products by price range: {minPrice} - {maxPrice}");
+            var filteredProducts = products.Where(p => p.Price >= minPrice && p.Price <= maxPrice).ToList();
+            if (!filteredProducts.Any())
+            {
+                return NotFound("No products found within the specified price range.");
+            }
+            return Ok(filteredProducts);
         }
 
         [HttpGet("{id}")]
