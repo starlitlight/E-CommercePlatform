@@ -9,7 +9,7 @@ public class MyApplicationDbContext : DbContext
     {
         var connectionString = Environment.GetEnvironmentVariable("DB_CONNECTION_STRING");
 
-        if(string.IsNullOrEmpty(connectionString))
+        if (string.IsNullOrEmpty(connectionString))
         {
             throw new InvalidOperationException("DB connection string is not set in environment variables.");
         }
