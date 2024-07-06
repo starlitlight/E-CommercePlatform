@@ -5,28 +5,38 @@ const ProductList = () => {
   const [products, setProducts] = useState([]);
 
   useEffect(() => {
+    let isMounted = true;
+
     const fetchData = async () => {
       try {
         const result = await axios(`${process.env.REACT_APP_BACKEND_URL}/products`);
-        setProducts(result.data);
+        if (isMounted) {
+          setProducts(result.data);
+        }
       } catch (error) {
         console.error('Failed to fetch products:', error);
       }
     };
 
     fetchData();
+
+    return () => {
+      isMounted = false;
+    };
   }, []);
+
+  const renderProduct = (product) => (
+    <li key={product.id}>{product.name} - ${product.price}</li>
+  );
 
   return (
     <div>
       <h2>Product List</h2>
       <ul>
-        {products.map(product => (
-          <li key={product.id}>{product.name} - ${product.price}</li>
-        ))}
+        {products.map(renderProduct)}
       </ul>
     </div>
   );
 };
 
-export default ProductList;
+export default React.memo(ProductList);
